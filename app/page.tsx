@@ -173,7 +173,7 @@ function importGoodreadsCSV(e: React.ChangeEvent<HTMLInputElement>) {
 },
       ]);
     }
-await supabase.from("books").insert([
+const { data, error } = await supabase.from("books").insert([
   {
     title,
     author,
@@ -183,6 +183,13 @@ await supabase.from("books").insert([
     date,
   },
 ]);
+
+if (error) {
+  alert("Error Supabase: " + error.message);
+  console.log(error);
+} else {
+  alert("Libro guardado en Supabase");
+}
     setTitle("");
     setAuthor("");
     setStatus("Quiero leer");
