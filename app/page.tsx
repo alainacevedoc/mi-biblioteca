@@ -81,14 +81,14 @@ async function searchBookInfo() {
     if (editingIndex !== null) {
       const updatedBooks = books.map((book, index) =>
         index === editingIndex
-          ? {
-              title,
-              author,
-              status,
-              review,
-              cover,
-              date,
-            }
+  ? {
+  title,
+  author,
+  status,
+  review,
+  cover,
+  date,
+}
           : book
       );
 
@@ -98,12 +98,13 @@ async function searchBookInfo() {
       setBooks([
         ...books,
         {
-          title,
-          author,
-          status,
-          review,
-          cover,
-        },
+  title,
+  author,
+  status,
+  review,
+  cover,
+  date,
+},
       ]);
     }
 
