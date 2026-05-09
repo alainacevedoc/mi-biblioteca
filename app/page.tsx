@@ -174,11 +174,11 @@ async function searchBookInfo() {
         </button>
 
         <input
-          className="bg-[#0b1736] text-white placeholder:text-white/50"
-          placeholder="Buscar por título, autor, estado o reseña..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+  className="w-full border border-[#ddd6cc] bg-white text-[#382110] placeholder:text-[#9b8f84] rounded-2xl p-3 mb-6"
+  placeholder="Buscar por título, autor, estado o reseña..."
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+/>
 <div className="flex gap-2 overflow-x-auto mb-6">
   {["Todos", "Quiero leer", "Leyendo", "Leído", "Abandonado"].map((item) => (
     <button
@@ -195,32 +195,54 @@ async function searchBookInfo() {
   ))}
 </div>
         {showForm && (
-  <div className="bg-white rounded-2xl p-4 shadow-sm mb-6 space-y-3">
-    <input className="bg-[#0b1736] text-white placeholder:text-white/50" placeholder="Título del libro" value={title} onChange={(e) => setTitle(e.target.value)} />
-    <button
+  <div className="bg-white rounded-2xl p-4 shadow-sm mb-6 space-y-3 border border-[#ddd6cc]">
+<input
+  className="w-full border border-[#ddd6cc] bg-white text-[#382110] placeholder:text-[#9b8f84] rounded-xl p-3"
+  placeholder="Título del libro"
+  value={title}
+  onChange={(e) => setTitle(e.target.value)}
+/>    <button
   onClick={searchBookInfo}
-  className="bg-[#111827] text-[#382110] border border-[#ddd6cc] px-4 py-3 rounded-xl text-sm w-full"
+  className="bg-[#382110] text-white border border-[#ddd6cc] px-4 py-3 rounded-xl text-sm w-full"
 >
   Buscar portada y autor
 </button>
-    <input className="bg-[#0b1736] text-white placeholder:text-white/50" placeholder="Autor" value={author} onChange={(e) => setAuthor(e.target.value)} />
-    <select className="w-full border border-[#ddd6cc] bg-[#111827] text-[#382110] rounded-xl p-3" value={status} onChange={(e) => setStatus(e.target.value)}>
-      <option>Quiero leer</option>
+<input
+  className="w-full border border-[#ddd6cc] bg-white text-[#382110] placeholder:text-[#9b8f84] rounded-xl p-3"
+  placeholder="Autor"
+  value={author}
+  onChange={(e) => setAuthor(e.target.value)}
+/>    <select
+  className="w-full border border-[#ddd6cc] bg-white text-[#382110] rounded-xl p-3"
+  value={status}
+  onChange={(e) => setStatus(e.target.value)}
+>
       <option>Leyendo</option>
       <option>Leído</option>
       <option>Abandonado</option>
     </select>
-    <input className="bg-[#0b1736] text-white placeholder:text-white/50" placeholder="URL de la portada" value={cover} onChange={(e) => setCover(e.target.value)} />
-    <input
+<input
+  className="w-full border border-[#ddd6cc] bg-white text-[#382110] placeholder:text-[#9b8f84] rounded-xl p-3"
+  placeholder="URL de la portada"
+  value={cover}
+  onChange={(e) => setCover(e.target.value)}
+/>    <input
   type="date"
-  className="w-full border border-[#ddd6cc] bg-[#111827] text-[#382110] rounded-xl p-3"
+  className="w-full border border-[#ddd6cc] bg-white text-[#382110] rounded-xl p-3"
   value={date}
   onChange={(e) => setDate(e.target.value)}
 />
-    <textarea className="bg-[#0b1736] text-white placeholder:text-white/50" placeholder="Reseña personal" value={review} onChange={(e) => setReview(e.target.value)} />
-    <button onClick={addBook} className="bg-black text-[#382110] px-4 py-3 rounded-2xl w-full">
-      Guardar libro
-    </button>
+<textarea
+  className="w-full border border-[#ddd6cc] bg-white text-[#382110] placeholder:text-[#9b8f84] rounded-xl p-3"
+  placeholder="Reseña personal"
+  value={review}
+  onChange={(e) => setReview(e.target.value)}
+/>    <button
+  onClick={addBook}
+  className="bg-[#382110] text-white px-4 py-3 rounded-2xl w-full"
+>
+  Guardar libro
+</button>
   </div>
 )}
 
