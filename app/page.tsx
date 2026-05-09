@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
+import { createClient } from "@supabase/supabase-js";
 type Book = {
   title: string;
   author: string;
@@ -10,9 +10,25 @@ type Book = {
   cover: string;
   date: string;
 };
-
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 export default function Home() {
   const [books, setBooks] = useState<Book[]>([]);
+  useEffect(() => {
+  fetchBooks();
+}, []);
+
+async function fetchBooks() {
+  const { data } = await supabase
+    .from("books")
+    .select("*");
+
+  if (data) {
+    setBooks(data);
+  }
+}
   const [loaded, setLoaded] = useState(false);
 
   const [showForm, setShowForm] = useState(false);
@@ -75,7 +91,57 @@ async function searchBookInfo() {
     setCover(`https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`);
   }
 }
-  function addBook() {
+function importGoodreadsCSV(e: React.ChangeEvent<HTMLInputElement>) {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = (event) => {
+    const text = event.target?.result;
+    if (typeof text !== "string") return;
+
+    const lines = text.split("\n");
+
+    const headers = lines[0]
+      .split(",")
+      .map((h) => h.replaceAll('"', "").trim());
+
+    const importedBooks = lines
+      .slice(1)
+      .map((line) => {
+        const values =
+          line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
+
+        const row: Record<string, string> = {};
+
+        headers.forEach((header, index) => {
+          row[header] =
+            values[index]?.replaceAll('"', "").trim() || "";
+        });
+
+        return {
+          title: row["Title"] || "",
+          author: row["Author"] || "",
+          status:
+            row["Exclusive Shelf"] === "read"
+              ? "Leído"
+              : row["Exclusive Shelf"] === "currently-reading"
+              ? "Leyendo"
+              : "Quiero leer",
+          review: row["My Review"] || "",
+          cover: "",
+          date: row["Date Read"] || "",
+        };
+      })
+      .filter((book) => book.title);
+
+    setBooks([...books, ...importedBooks]);
+  };
+
+  reader.readAsText(file);
+}
+ async function addBook() {
     if (!title.trim()) return;
 
     if (editingIndex !== null) {
@@ -107,7 +173,16 @@ async function searchBookInfo() {
 },
       ]);
     }
-
+await supabase.from("books").insert([
+  {
+    title,
+    author,
+    status,
+    review,
+    cover,
+    date,
+  },
+]);
     setTitle("");
     setAuthor("");
     setStatus("Quiero leer");
@@ -161,6 +236,15 @@ async function searchBookInfo() {
       className="hidden"
     />
   </label>
+  <label className="bg-[#382110] text-white border border-[#ddd6cc] px-4 py-3 rounded-2xl text-sm cursor-pointer">
+  📚 Importar Goodreads
+  <input
+    type="file"
+    accept=".csv"
+    onChange={importGoodreadsCSV}
+    className="hidden"
+  />
+</label>
 </div>
           <p className="text-[#6b5f55] mb-8 text-lg">
   Tu espacio personal para guardar libros.
