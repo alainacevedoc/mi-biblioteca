@@ -27,10 +27,12 @@ const supabase = createClient(
 
 export default function Home() {
   const [books, setBooks] = useState<Book[]>([]);
-  const [showForm, setShowForm] = useState(false);
-const [books, setBooks] = useState<Book[]>([])
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
+const [showForm, setShowForm] = useState(false);
+
+const [editingId, setEditingId] = useState<number | null>(null);
+
+const [title, setTitle] = useState("");
+const [author, setAuthor] = useState("");
   const [status, setStatus] = useState("Quiero leer");
   const [review, setReview] = useState("");
   const [cover, setCover] = useState("");
