@@ -28,7 +28,7 @@ const supabase = createClient(
 export default function Home() {
   const [books, setBooks] = useState<Book[]>([]);
   const [showForm, setShowForm] = useState(false);
-
+const [books, setBooks] = useState<Book[]>([])
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [status, setStatus] = useState("Quiero leer");
@@ -147,22 +147,29 @@ async function searchBookByISBN() {
   async function addBook() {
     if (!title.trim()) return;
 
-    const { error } = await supabase.from("books").insert([
-      {
-        title,
-        author,
-        status,
-        review,
-        cover,
-        date,
-        isbn,
+    const bookData = {
+  title,
+  author,
+  status,
+  review,
+  cover,
+  date,
+  isbn,
   publisher,
   published_year: publishedYear,
   pages: pages ? Number(pages) : null,
   description,
   categories,
-      },
-    ]);
+};
+
+const { error } = editingId
+  ? await supabase
+      .from("books")
+      .update(bookData)
+      .eq("id", editingId)
+  : await supabase
+      .from("books")
+      .insert([bookData]);
 
     if (error) {
       alert(error.message);
@@ -172,6 +179,7 @@ async function searchBookByISBN() {
     setTitle("");
     setAuthor("");
     setStatus("Quiero leer");
+    setEditingId(null);
     setReview("");
     setCover("");
     setDate("");
@@ -273,11 +281,6 @@ setCategories("");
   onClick={searchBookByISBN}
   className="bg-black text-white rounded-xl p-3 w-full"
 >
-  Buscar por ISBN
-</button>
-            <button
-              onClick={searchBookInfo}
-              className="bg-black text-white rounded-xl p-3 w-full"
             >
               Buscar portada y autor
             </button>
@@ -408,7 +411,31 @@ setCategories("");
                   {book.date}
                 </p>
               )}
+<button
+  onClick={(e) => {
+    e.stopPropagation();
 
+    setTitle(book.title);
+    setAuthor(book.author);
+    setStatus(book.status);
+    setReview(book.review);
+    setCover(book.cover);
+    setDate(book.date || "");
+
+    setIsbn(book.isbn || "");
+    setPublisher(book.publisher || "");
+    setPublishedYear(book.published_year || "");
+    setPages(book.pages ? String(book.pages) : "");
+    setDescription(book.description || "");
+    setCategories(book.categories || "");
+
+    setEditingId(book.id);
+    setShowForm(true);
+  }}
+  className="text-blue-400 mt-4 mr-4 text-sm"
+>
+  Editar
+</button>
               <button
   onClick={async (e) => {
     e.stopPropagation();
