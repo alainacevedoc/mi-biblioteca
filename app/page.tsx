@@ -147,55 +147,56 @@ async function searchBookByISBN() {
   }
 }
   async function addBook() {
-    if (!title.trim()) return;
+  if (!title.trim()) return;
 
-    const bookData = {
-  title,
-  author,
-  status,
-  review,
-  cover,
-  date,
-  isbn,
-  publisher,
-  published_year: publishedYear,
-  pages: pages ? Number(pages) : null,
-  description,
-  categories,
-};
+  const bookData = {
+    title,
+    author,
+    status,
+    review,
+    cover,
+    date,
+    isbn,
+    publisher,
+    published_year: publishedYear,
+    pages: pages ? Number(pages) : null,
+    description,
+    categories,
+  };
 
-const { error } = editingId
-  ? await supabase
-      .from("books")
-      .update(bookData)
-      .eq("id", editingId)
-  : await supabase
-      .from("books")
-      .insert([bookData]);
+  const { error } = editingId
+    ? await supabase
+        .from("books")
+        .update(bookData)
+        .eq("id", editingId)
+    : await supabase
+        .from("books")
+        .insert([bookData]);
 
-    if (error) {
-      alert(error.message);
-      return;
-    }
-
-    setTitle("");
-    setAuthor("");
-    setStatus("Quiero leer");
-    setEditingId(null);
-    setReview("");
-    setCover("");
-    setDate("");
-    setIsbn("");
-setPublisher("");
-setPublishedYear("");
-setPages("");
-setDescription("");
-setCategories("");
-
-    setShowForm(false);
-
-    fetchBooks();
+  if (error) {
+    console.log(error);
+    alert("Error guardando cambios: " + error.message);
+    return;
   }
+
+  await fetchBooks();
+
+  setTitle("");
+  setAuthor("");
+  setStatus("Quiero leer");
+  setReview("");
+  setCover("");
+  setDate("");
+  setIsbn("");
+  setPublisher("");
+  setPublishedYear("");
+  setPages("");
+  setDescription("");
+  setCategories("");
+
+  setEditingId(null);
+  setShowForm(false);
+}
 
   async function deleteBook(id: number) {
   const { error } = await supabase
@@ -420,7 +421,7 @@ setCategories("");
     setAuthor(book.author);
     setStatus(book.status);
     setReview(book.review);
-    setCover(book.cover);
+    setCover(book.cover || "");
     setDate(book.date || "");
 
     setIsbn(book.isbn || "");
