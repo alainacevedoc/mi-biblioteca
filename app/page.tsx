@@ -306,14 +306,21 @@ export default function Home() {
               )}
 
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteBook(book.id);
-                }}
-                className="text-red-400 mt-4 text-sm"
-              >
-                Eliminar
-              </button>
+  onClick={async (e) => {
+    e.stopPropagation();
+
+    const confirmDelete = confirm(
+      "¿Eliminar este libro?"
+    );
+
+    if (!confirmDelete) return;
+
+    await deleteBook(book.id);
+  }}
+  className="text-red-400 mt-4 text-sm"
+>
+  Eliminar
+</button>
             </div>
           ))}
         </div>
