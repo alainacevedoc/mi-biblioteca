@@ -281,7 +281,6 @@ setCategories("");
   onClick={searchBookByISBN}
   className="bg-black text-white rounded-xl p-3 w-full"
 >
-            >
               Buscar portada y autor
             </button>
 
