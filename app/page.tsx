@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 type Book = {
-  id: string;
+  id: number;
   title: string;
   author: string;
   status: string;
@@ -108,16 +108,22 @@ export default function Home() {
     fetchBooks();
   }
 
-  async function deleteBook(id: string) {
-    const { error } = await supabase
-      .from("books")
-      .delete()
-      .eq("id", id);
+  async function deleteBook(id: number) {
+  const { error } = await supabase
+    .from("books")
+    .delete()
+    .eq("id", id);
 
-    if (!error) {
-      fetchBooks();
-    }
+  if (error) {
+    console.log(error);
+    alert("Error eliminando libro");
+    return;
   }
+
+  setBooks((prev) =>
+    prev.filter((book) => book.id !== id)
+  );
+}
 
   const filteredBooks = [...books]
     .filter((book) =>
