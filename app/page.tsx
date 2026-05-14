@@ -12,6 +12,12 @@ type Book = {
   cover: string;
   date: string;
   created_at?: string;
+  isbn?: string;
+publisher?: string;
+published_year?: string;
+pages?: number;
+description?: string;
+categories?: string;
 };
 
 const supabase = createClient(
@@ -29,6 +35,12 @@ export default function Home() {
   const [review, setReview] = useState("");
   const [cover, setCover] = useState("");
   const [date, setDate] = useState("");
+  const [isbn, setIsbn] = useState("");
+const [publisher, setPublisher] = useState("");
+const [publishedYear, setPublishedYear] = useState("");
+const [pages, setPages] = useState("");
+const [description, setDescription] = useState("");
+const [categories, setCategories] = useState("");
 
   const [search, setSearch] = useState("");
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
@@ -76,7 +88,62 @@ export default function Home() {
       );
     }
   }
+async function searchBookByISBN() {
+  if (!isbn.trim()) return;
 
+  const cleanIsbn = isbn
+    .replaceAll("-", "")
+    .replaceAll(" ", "");
+
+  const response = await fetch(
+    `https://openlibrary.org/isbn/${cleanIsbn}.json`
+  );
+
+  if (!response.ok) {
+    alert("No encontré ese ISBN");
+    return;
+  }
+
+  const data = await response.json();
+
+  if (data.title) setTitle(data.title);
+
+  if (data.publishers?.[0]) {
+    setPublisher(data.publishers[0]);
+  }
+
+  if (data.publish_date) {
+    setPublishedYear(data.publish_date);
+  }
+
+  if (data.number_of_pages) {
+    setPages(String(data.number_of_pages));
+  }
+
+  if (data.description) {
+    setDescription(
+      typeof data.description === "string"
+        ? data.description
+        : data.description.value
+    );
+  }
+
+  setCover(
+    `https://covers.openlibrary.org/b/isbn/${cleanIsbn}-L.jpg`
+  );
+
+  if (data.authors?.[0]?.key) {
+    const authorResponse = await fetch(
+      `https://openlibrary.org${data.authors[0].key}.json`
+    );
+
+    const authorData = await authorResponse.json();
+
+    if (authorData.name) {
+      setAuthor(authorData.name);
+    }
+  }
+}
   async function addBook() {
     if (!title.trim()) return;
 
@@ -88,6 +155,12 @@ export default function Home() {
         review,
         cover,
         date,
+        isbn,
+  publisher,
+  published_year: publishedYear,
+  pages: pages ? Number(pages) : null,
+  description,
+  categories,
       },
     ]);
 
@@ -102,6 +175,12 @@ export default function Home() {
     setReview("");
     setCover("");
     setDate("");
+    setIsbn("");
+setPublisher("");
+setPublishedYear("");
+setPages("");
+setDescription("");
+setCategories("");
 
     setShowForm(false);
 
@@ -177,6 +256,25 @@ export default function Home() {
               onChange={(e) => setTitle(e.target.value)}
             />
 
+            <input
+  className="w-full border p-3 rounded-xl"
+  placeholder="ISBN"
+  value={isbn}
+  onChange={(e) => setIsbn(e.target.value)}
+/>
+
+<button
+  onClick={searchBookByISBN}
+  className="bg-black text-white rounded-xl p-3 w-full"
+>
+  Buscar por ISBN
+</button>
+<button
+  onClick={searchBookByISBN}
+  className="bg-black text-white rounded-xl p-3 w-full"
+>
+  Buscar por ISBN
+</button>
             <button
               onClick={searchBookInfo}
               className="bg-black text-white rounded-xl p-3 w-full"
@@ -353,7 +451,35 @@ export default function Home() {
             <p className="text-gray-500 mb-2">
               {selectedBook.author}
             </p>
+{selectedBook.isbn && (
+  <p className="text-sm text-gray-500">
+    ISBN: {selectedBook.isbn}
+  </p>
+)}
 
+{selectedBook.publisher && (
+  <p className="text-sm text-gray-500">
+    Editorial: {selectedBook.publisher}
+  </p>
+)}
+
+{selectedBook.pages && (
+  <p className="text-sm text-gray-500">
+    {selectedBook.pages} páginas
+  </p>
+)}
+
+{selectedBook.published_year && (
+  <p className="text-sm text-gray-500">
+    Publicado: {selectedBook.published_year}
+  </p>
+)}
+
+{selectedBook.description && (
+  <p className="mt-4 text-gray-700 leading-7">
+    {selectedBook.description}
+  </p>
+)}
             <h2 className="text-4xl font-bold mb-4">
               {selectedBook.title}
             </h2>
